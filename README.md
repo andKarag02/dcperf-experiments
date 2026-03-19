@@ -164,13 +164,6 @@ This setup avoids known TaoBench/DCPerf problems:
 * Default values can be overridden at runtime
 * Designed for **academic experiments and benchmarking**
 
----
-
-##  Disclaimer
-
-* No credentials or sensitive data are included
-* IPs are local/private and for topology illustration only
-* Repository is safe for sharing and reproducibility
 
 ---
 
@@ -184,4 +177,4 @@ This repository was developed as part of a **Diploma Thesis** focused on:
 
 ##  Author
 
-* GitHub: *your-username*
+* GitHub: andkarag02
