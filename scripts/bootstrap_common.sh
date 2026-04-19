@@ -4,7 +4,7 @@ set -euo pipefail
 echo "[INFO] bootstrap_common.sh started"
 
 DCPERF_REPO="https://github.com/facebookresearch/DCPerf.git"
-DCPERF_COMMIT="9388c3e3c404e0466f0a2929f15ddcf62b2215f6"
+DCPERF_COMMIT="9308c3e3c404e0466f0a2929f15ddcf62b2215f6"
 DCPERF_DIR="$HOME/DCPerf"
 VENV_DIR="$DCPERF_DIR/venv"
 
