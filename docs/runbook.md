@@ -133,6 +133,9 @@ Key metrics reported by `benchpress_cli.py`:
 | Client cannot reach server | Wrong IP / interface | Check `SERVER_HOSTNAME` and `INTERFACE_NAME` |
 | `numactl` not found | Package missing | Re-run `bootstrap_common.sh` |
 | Server exits immediately | Autoscale mode error | Check latest `tao-bench-server-*.log` in `~/DCPerf/` |
+| `pyconfig.h: No such file or directory` | Python dev headers missing | `sudo apt-get install -y python3-dev` then re-run bootstrap |
+| Build fails with out-of-memory | Too many parallel jobs | Bootstrap now auto-detects safe job count; retry with `MAKEFLAGS=-j1` |
+| `ModuleNotFoundError` during install | venv not activated | Bootstrap now always activates venv; re-run `bootstrap_server.sh` |
 
 ---
 

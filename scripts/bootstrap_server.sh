@@ -24,11 +24,64 @@ if [ -f "$HOME/DCPerf/venv/bin/activate" ]; then
   source "$HOME/DCPerf/venv/bin/activate"
 else
   echo "[ERROR] Virtual environment not found at $HOME/DCPerf/venv"
+  echo "        Re-run bootstrap_common.sh to recreate it."
   exit 1
 fi
 
-echo "[INFO] Installing TaoBench autoscale"
-./benchpress_cli.py install tao_bench_autoscale
+# ── Python headers for Boost.Python / C++ extensions ─────────────────────────
+
+PYTHON3_BIN="$(command -v python3)"
+PY_INCLUDE="$("$PYTHON3_BIN" -c 'import sysconfig; print(sysconfig.get_path("include"))')"
+export CPATH="${PY_INCLUDE}${CPATH:+:${CPATH}}"
+export CPLUS_INCLUDE_PATH="${PY_INCLUDE}${CPLUS_INCLUDE_PATH:+:${CPLUS_INCLUDE_PATH}}"
+echo "[INFO] CPATH=${CPATH}"
+echo "[INFO] CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}"
+
+# ── Determine safe parallel job count ────────────────────────────────────────
+
+# MB of RAM reserved per parallel compile job
+MEM_MB_PER_JOB=1536
+
+NPROC="$(nproc 2>/dev/null || echo 4)"
+MEM_KB="$(grep MemAvailable /proc/meminfo | awk '{print $2}')"
+# Allow MEM_MB_PER_JOB per compile job; cap at nproc
+MAX_JOBS_MEM=$(( MEM_KB / (MEM_MB_PER_JOB * 1024) ))
+[ "$MAX_JOBS_MEM" -lt 1 ] && MAX_JOBS_MEM=1
+if [ "$MAX_JOBS_MEM" -lt "$NPROC" ]; then
+  BUILD_JOBS="$MAX_JOBS_MEM"
+else
+  BUILD_JOBS="$NPROC"
+fi
+echo "[INFO] Using ${BUILD_JOBS} parallel build job(s) (${NPROC} CPUs, $(( MEM_KB / 1024 / 1024 )) GB available RAM)"
+export MAKEFLAGS="-j${BUILD_JOBS}"
+
+# ── Install TaoBench autoscale (with retry on fewer jobs) ────────────────────
+
+install_tao_bench() {
+  local jobs="${1:-${BUILD_JOBS}}"
+  echo "[INFO] Installing TaoBench autoscale (MAKEFLAGS=-j${jobs})"
+  MAKEFLAGS="-j${jobs}" ./benchpress_cli.py install tao_bench_autoscale
+}
+
+echo "[INFO] Attempting TaoBench autoscale install"
+if ! install_tao_bench "${BUILD_JOBS}"; then
+  echo "[WARN] Initial install failed with -j${BUILD_JOBS}; retrying with -j1"
+  echo "[WARN] This is usually caused by insufficient memory during parallel compilation."
+  # Clean any stale build artifacts before retry
+  rm -rf "$HOME/DCPerf/benchmarks/tao_bench/build-folly" 2>/dev/null || true
+  if ! install_tao_bench 1; then
+    echo "[ERROR] TaoBench autoscale installation failed."
+    echo "        Possible causes and fixes:"
+    echo "          • Missing Python headers: sudo apt-get install -y python3-dev"
+    echo "          • Missing build tools:    sudo apt-get install -y build-essential cmake"
+    echo "          • Out of disk space:      df -h \$HOME"
+    echo "          • Out of memory:          free -h"
+    echo "        Check the build log above for the first error line."
+    exit 1
+  fi
+fi
+
+echo "[INFO] TaoBench autoscale installed successfully"
 
 echo "[INFO] Creating tao_server.sh"
 cat > "$HOME/DCPerf/tao_server.sh" <<'EOF'
