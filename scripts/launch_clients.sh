@@ -7,7 +7,7 @@ set -euo pipefail
 CLIENT1_HOST="${CLIENT1_HOST:-192.168.1.11}"
 CLIENT2_HOST="${CLIENT2_HOST:-192.168.1.12}"
 SSH_USER="${SSH_USER:-$(whoami)}"
-SSH_OPTS="-o StrictHostKeyChecking=no -o ConnectTimeout=10"
+SSH_OPTS=(-o StrictHostKeyChecking=no -o ConnectTimeout=10)
 
 # Propagate configurable parameters to each client
 SERVER_HOSTNAME="${SERVER_HOSTNAME:-192.168.1.10}"
@@ -31,7 +31,7 @@ run_client() {
   local label="$2"
   echo "[INFO] Starting TaoBench client on ${label} (${host})"
   # shellcheck disable=SC2029
-  ssh ${SSH_OPTS} "${SSH_USER}@${host}" "env ${REMOTE_ENV} bash \$HOME/DCPerf/tao_client.sh" \
+  ssh "${SSH_OPTS[@]}" "${SSH_USER}@${host}" "env ${REMOTE_ENV} bash \$HOME/DCPerf/tao_client.sh" \
     2>&1 | sed "s/^/[${label}] /" &
 }
 
