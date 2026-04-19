@@ -3,7 +3,19 @@ set -euo pipefail
 
 echo "[INFO] bootstrap_server.sh started"
 
-bash "$HOME/bootstrap_common.sh"
+# Locate bootstrap_common.sh next to this script.
+# If not found (e.g. run via `curl | bash`), download it from GitHub.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" 2>/dev/null && pwd || echo "$HOME")"
+COMMON_SCRIPT="${SCRIPT_DIR}/bootstrap_common.sh"
+REPO_RAW="https://raw.githubusercontent.com/andKarag02/dcperf-experiments/main/scripts"
+
+if [ ! -f "${COMMON_SCRIPT}" ]; then
+  echo "[INFO] bootstrap_common.sh not found locally — downloading from GitHub"
+  curl -fsSL "${REPO_RAW}/bootstrap_common.sh" -o /tmp/bootstrap_common.sh
+  COMMON_SCRIPT="/tmp/bootstrap_common.sh"
+fi
+
+bash "${COMMON_SCRIPT}"
 
 cd "$HOME/DCPerf"
 

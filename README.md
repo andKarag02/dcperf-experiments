@@ -43,7 +43,7 @@ This setup is designed for **consistent and repeatable experiments**.
 * **DCPerf version pinned to commit:**
 
 ```
-9388c3e3c404e0466f0a2929f15ddcf62b2215f6
+9308c3e3c404e0466f0a2929f15ddcf62b2215f6
 ```
 
 * Python environment:
@@ -82,12 +82,23 @@ bash ~/bootstrap_server.sh
 
 ---
 
-### 3. Client Setup (run on both clients)
+### 3. Client Setup (run on each client node)
+
+**Option A — clone the repo and run directly (recommended):**
 
 ```bash
-chmod +x ~/bootstrap_common.sh ~/bootstrap_client.sh
-bash ~/bootstrap_client.sh
+git clone https://github.com/andKarag02/dcperf-experiments.git ~/dcperf-experiments
+bash ~/dcperf-experiments/scripts/bootstrap_client.sh
 ```
+
+**Option B — one-liner (no SSH from server needed, run directly on each client via CloudLab web/SSH):**
+
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/andKarag02/dcperf-experiments/main/scripts/bootstrap_client.sh)
+```
+
+> **Note:** you can run either option independently on each client node without cross-node SSH.
+> Set up cross-node SSH only when you are ready to use `launch_clients.sh`.
 
 ---
 
