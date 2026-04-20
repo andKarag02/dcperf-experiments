@@ -58,4 +58,30 @@ iface_c2 = client2.addInterface("if0")
 iface_c2.addAddress(rspec.IPv4Address("192.168.1.12", "255.255.255.0"))
 lan.addInterface(iface_c2)
 
+REPO_RAW = "https://raw.githubusercontent.com/andKarag02/dcperf-experiments/main/scripts"
+
+server.addService(rspec.Execute(
+    shell="bash",
+    command=(
+        "curl -fsSL {repo}/bootstrap_server.sh | bash "
+        "> /tmp/bootstrap_server.log 2>&1"
+    ).format(repo=REPO_RAW)
+))
+
+client1.addService(rspec.Execute(
+    shell="bash",
+    command=(
+        "curl -fsSL {repo}/bootstrap_client.sh | bash "
+        "> /tmp/bootstrap_client.log 2>&1"
+    ).format(repo=REPO_RAW)
+))
+
+client2.addService(rspec.Execute(
+    shell="bash",
+    command=(
+        "curl -fsSL {repo}/bootstrap_client.sh | bash "
+        "> /tmp/bootstrap_client.log 2>&1"
+    ).format(repo=REPO_RAW)
+))
+
 pc.printRequestRSpec(request)
