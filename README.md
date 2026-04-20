@@ -161,7 +161,8 @@ This setup avoids known TaoBench/DCPerf problems:
 │   ├── bootstrap_common.sh
 │   ├── bootstrap_server.sh
 │   ├── bootstrap_client.sh
-│   └── launch_clients.sh
+│   ├── launch_clients.sh
+│   └── run_all_experiments.sh
 ├── docs/
 │   └── runbook.md
 └── README.md
