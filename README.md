@@ -123,6 +123,36 @@ bash ~/launch_clients.sh
 
 ---
 
+##  Run all experiments (automated)
+
+For batch runs with multiple load levels and repetitions, use `run_all_experiments.sh` from the server node:
+
+```bash
+bash ~/dcperf-experiments/scripts/run_all_experiments.sh
+```
+
+**Configuration (via environment variables):**
+
+```bash
+RUNS=5                                    # Number of runs per load level
+LOADS="100 150 200 250 300 340 380 400"   # Load levels (clients_per_thread)
+MEMSIZE=16                                # Server memory in GB
+WARMUP=900                                # Warmup time in seconds
+TEST=300                                  # Test time in seconds
+STARTUP_WAIT=20                           # Seconds to wait for server startup
+COOLDOWN_WAIT=25                          # Seconds to wait between runs
+```
+
+**Results location:**
+
+| File | Description |
+| ---- | ----------- |
+| `~/DCPerf/exp_runs/summary.csv` | One row per run with all client and server metrics |
+| `~/DCPerf/exp_runs/load_<LOAD>_aggregate.csv` | Per-load mean/min/max aggregation across all runs |
+| `~/DCPerf/exp_runs/load_<LOAD>_run<N>_<timestamp>/` | Raw logs and artifacts for each individual run |
+
+---
+
 ##  Monitoring
 
 On the server:
@@ -162,6 +192,8 @@ This setup avoids known TaoBench/DCPerf problems:
 │   ├── bootstrap_server.sh
 │   ├── bootstrap_client.sh
 │   ├── launch_clients.sh
+│   ├── tao_client.sh
+│   ├── tao_server.sh
 │   └── run_all_experiments.sh
 ├── docs/
 │   └── runbook.md
