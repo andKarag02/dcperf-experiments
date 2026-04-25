@@ -12,6 +12,7 @@ WAIT_AFTER_WARMUP="${WAIT_AFTER_WARMUP:-5}"
 OPEN_FILES_LIMIT="${OPEN_FILES_LIMIT:-65536}"
 # Tuned default used for the CloudLab experiment profile; override if your node cannot sustain it.
 CLIENTS_PER_THREAD="${CLIENTS_PER_THREAD:-380}"
+# 1 disables TLS; 0 enables TLS.
 DISABLE_TLS="${DISABLE_TLS:-1}"
 
 cd "$DCPERF_DIR"
