@@ -136,7 +136,34 @@ Displays:
 
 ---
 
-## 8. Collect Results
+## 8. Optional: Collect System Utilization (CPU/Mem/Net/Disk)
+
+Run this on any node you want to monitor (server or clients):
+
+```bash
+OUTPUT_DIR=~/DCPerf/utilization \
+INTERFACE=enp3s0f0 \
+NODE_LABEL=$(hostname -s) \
+bash ~/DCPerf/collect_utilization.sh &
+UTIL_PID=$!
+```
+
+Stop after the experiment:
+
+```bash
+kill "$UTIL_PID"
+```
+
+Generated CSV files inside `OUTPUT_DIR`:
+
+* `cpu.csv`
+* `memory.csv`
+* `network.csv`
+* `disk.csv`
+
+---
+
+## 9. Collect Results
 
 TaoBench writes JSON result files to `~/DCPerf/`. After the test completes:
 
@@ -151,7 +178,7 @@ Key metrics reported by `benchpress_cli.py`:
 
 ---
 
-## 9. Troubleshooting
+## 10. Troubleshooting
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
@@ -166,7 +193,7 @@ Key metrics reported by `benchpress_cli.py`:
 
 ---
 
-## 10. Running Multiple Experiments (Bulk Runs)
+## 11. Running Multiple Experiments (Bulk Runs)
 
 Use `scripts/run_all_experiments.sh` to sweep across multiple load levels and repeat each measurement N times automatically. The script handles server/client lifecycle, metric collection, SSH artifact retrieval, and CSV aggregation in a single command.
 

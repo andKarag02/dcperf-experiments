@@ -123,6 +123,28 @@ bash ~/launch_clients.sh
 
 ---
 
+### Optional: collect system utilization
+
+On each node you want to monitor (server and/or clients):
+
+```bash
+OUTPUT_DIR=~/DCPerf/utilization \
+INTERFACE=enp3s0f0 \
+NODE_LABEL=$(hostname -s) \
+bash ~/DCPerf/collect_utilization.sh &
+UTIL_PID=$!
+```
+
+Stop collection when the run finishes:
+
+```bash
+kill "$UTIL_PID"
+```
+
+This writes `cpu.csv`, `memory.csv`, `network.csv`, and `disk.csv` in `OUTPUT_DIR`.
+
+---
+
 ##  Monitoring
 
 On the server:
