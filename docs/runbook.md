@@ -14,7 +14,34 @@ Default hardware type: **c6220** — override via the `hardware_type` profile pa
 
 ---
 
-## 2. Copy Bootstrap Scripts to Each Node
+## 2. Create SSH Public Key on the Server and Add It via CloudLab UI
+
+`launch_clients.sh` uses SSH from `server` to `client1`/`client2`, so set up a key before continuing.
+
+On the **server** node:
+
+```bash
+# Create a key only if one does not already exist
+test -f ~/.ssh/id_ed25519 || ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N ""
+
+# Print public key (copy this output)
+cat ~/.ssh/id_ed25519.pub
+```
+
+Then in the CloudLab web UI:
+
+1. Open your experiment and edit node login/authorized SSH keys for the client nodes.
+2. Paste the copied server public key.
+3. Save/apply changes, then verify from `server`:
+
+```bash
+ssh client1 hostname
+ssh client2 hostname
+```
+
+---
+
+## 3. Copy Bootstrap Scripts to Each Node
 
 SSH into each node and download the scripts from this repository:
 
@@ -32,7 +59,7 @@ chmod +x ~/bootstrap_common.sh ~/bootstrap_client.sh
 
 ---
 
-## 3. Bootstrap All Nodes
+## 4. Bootstrap All Nodes
 
 Run the appropriate bootstrap script on **each** node. Bootstrap can run in parallel across nodes.
 
@@ -48,7 +75,7 @@ Bootstrap installs system packages, clones DCPerf at the pinned commit, creates 
 
 ---
 
-## 4. Start the TaoBench Server
+## 5. Start the TaoBench Server
 
 On the **server** node:
 
@@ -78,7 +105,7 @@ MEMSIZE_GB=32 TEST_TIME=600 ./tao_server.sh
 
 ---
 
-## 5. Launch the Clients
+## 6. Launch the Clients
 
 From the **server** node (once the server is running and past the warm-up phase):
 
@@ -92,7 +119,7 @@ Configuration is forwarded via the same environment variables listed above (exce
 
 ---
 
-## 6. Monitor the Server
+## 7. Monitor the Server
 
 In a separate terminal on the **server**:
 
@@ -109,7 +136,7 @@ Displays:
 
 ---
 
-## 7. Collect Results
+## 8. Collect Results
 
 TaoBench writes JSON result files to `~/DCPerf/`. After the test completes:
 
@@ -124,7 +151,7 @@ Key metrics reported by `benchpress_cli.py`:
 
 ---
 
-## 8. Troubleshooting
+## 9. Troubleshooting
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
@@ -139,7 +166,7 @@ Key metrics reported by `benchpress_cli.py`:
 
 ---
 
-## 9. Running Multiple Experiments (Bulk Runs)
+## 10. Running Multiple Experiments (Bulk Runs)
 
 Use `scripts/run_all_experiments.sh` to sweep across multiple load levels and repeat each measurement N times automatically. The script handles server/client lifecycle, metric collection, SSH artifact retrieval, and CSV aggregation in a single command.
 
