@@ -89,4 +89,14 @@ fi
 
 install -m 0755 "${TAO_CLIENT_SOURCE}" "$HOME/DCPerf/tao_client.sh"
 
+echo "[INFO] Creating collect_utilization.sh"
+UTIL_SOURCE="${SCRIPT_DIR}/collect_utilization.sh"
+if [ ! -f "${UTIL_SOURCE}" ]; then
+  echo "[INFO] collect_utilization.sh not found locally -- downloading from GitHub"
+  curl -fsSL "${REPO_RAW}/collect_utilization.sh" -o /tmp/collect_utilization.sh
+  UTIL_SOURCE="/tmp/collect_utilization.sh"
+fi
+
+install -m 0755 "${UTIL_SOURCE}" "$HOME/DCPerf/collect_utilization.sh"
+
 echo "[INFO] bootstrap_client.sh completed"
