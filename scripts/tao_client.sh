@@ -10,6 +10,7 @@ TEST_TIME="${TEST_TIME:-300}"
 SERVER_PORT="${SERVER_PORT:-11211}"
 WAIT_AFTER_WARMUP="${WAIT_AFTER_WARMUP:-5}"
 OPEN_FILES_LIMIT="${OPEN_FILES_LIMIT:-65536}"
+# Tuned default used for the CloudLab experiment profile; override if your node cannot sustain it.
 CLIENTS_PER_THREAD="${CLIENTS_PER_THREAD:-380}"
 DISABLE_TLS="${DISABLE_TLS:-1}"
 
@@ -60,6 +61,6 @@ CLIENT_PARAMS="{
   -i "$CLIENT_PARAMS" \
   2>&1 | tee "$LOGFILE"
 
-awk '/Results [Rr]eport:/{flag=1} flag{print}' "$LOGFILE" > "$LATFILE" || true
+awk 'BEGIN{IGNORECASE=1} /Results report:/{flag=1} flag{print}' "$LOGFILE" > "$LATFILE" || true
 
 echo "[INFO] Done. Results in $RESULTS_DIR/"

@@ -2,6 +2,7 @@
 set -euo pipefail
 
 DCPERF_DIR="${HOME}/DCPerf"
+# CloudLab profile default NIC for this setup; override via INTERFACE_NAME if needed.
 INTERFACE_NAME="${INTERFACE_NAME:-enp3s0f0}"
 SERVER_HOSTNAME="${SERVER_HOSTNAME:-192.168.1.10}"
 NUM_CLIENTS="${NUM_CLIENTS:-2}"
