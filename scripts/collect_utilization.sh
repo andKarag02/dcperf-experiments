@@ -31,6 +31,11 @@ ROOT_SRC="$(findmnt -n -o SOURCE / 2>/dev/null || true)"
 ROOT_DEV_REAL="$(readlink -f "$ROOT_SRC" 2>/dev/null || echo "$ROOT_SRC")"
 ROOT_DEV_NAME="$(basename "$ROOT_DEV_REAL")"
 
+if [ -z "${ROOT_DEV_NAME}" ] || [ "${ROOT_DEV_NAME}" = "." ]; then
+  echo "[WARN] Could not detect root block device; disk metrics will use zeros."
+  ROOT_DEV_NAME=""
+fi
+
 get_cpu_totals() {
   awk '/^cpu / {print $2+$3+$4+$5+$6+$7+$8, $5+$6}' /proc/stat
 }
@@ -58,6 +63,10 @@ get_tx_bytes() {
 }
 
 get_disk_sectors() {
+  if [ -z "${ROOT_DEV_NAME}" ]; then
+    echo "0 0"
+    return 0
+  fi
   awk -v dev="$ROOT_DEV_NAME" '$3 == dev {print $6, $10}' /proc/diskstats
 }
 
@@ -104,10 +113,12 @@ while true; do
 
   curr_rx="$(get_rx_bytes)"
   curr_tx="$(get_tx_bytes)"
-  rx_bps=$((curr_rx - prev_rx))
-  tx_bps=$((curr_tx - prev_tx))
-  if [ "$rx_bps" -lt 0 ]; then rx_bps=0; fi
-  if [ "$tx_bps" -lt 0 ]; then tx_bps=0; fi
+  rx_delta=$((curr_rx - prev_rx))
+  tx_delta=$((curr_tx - prev_tx))
+  if [ "$rx_delta" -lt 0 ]; then rx_delta=0; fi
+  if [ "$tx_delta" -lt 0 ]; then tx_delta=0; fi
+  rx_bps="$(awk -v d="$rx_delta" -v i="$INTERVAL_SECONDS" 'BEGIN {if (i<=0) i=1; printf "%.2f", d/i}')"
+  tx_bps="$(awk -v d="$tx_delta" -v i="$INTERVAL_SECONDS" 'BEGIN {if (i<=0) i=1; printf "%.2f", d/i}')"
   echo "${ts},${NODE_LABEL},${INTERFACE},${rx_bps},${tx_bps}" >> "$NET_CSV"
   prev_rx="$curr_rx"
   prev_tx="$curr_tx"
