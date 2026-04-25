@@ -61,6 +61,10 @@ CLIENT_PARAMS="{
   -i "$CLIENT_PARAMS" \
   2>&1 | tee "$LOGFILE"
 
+# Extract summary from the "Results report:" section to the latency file.
 awk 'BEGIN{IGNORECASE=1} /Results report:/{flag=1} flag{print}' "$LOGFILE" > "$LATFILE" || true
+if [ ! -s "$LATFILE" ]; then
+  echo "[WARN] Latency summary file is empty; check $LOGFILE for benchmark output format changes."
+fi
 
 echo "[INFO] Done. Results in $RESULTS_DIR/"

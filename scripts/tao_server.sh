@@ -67,10 +67,14 @@ METRICS_LIST="$RESULTS_DIR/server_metrics_files_${TIMESTAMP}.txt"
   2>&1 | tee "$CONSOLE_LOG"
 
 echo "[INFO] Collecting benchmark metric files..."
+# DCPerf writes benchmark logs under benchmark_metrics_* directories.
 find "$DCPERF_DIR" -path '*/benchmark_metrics_*/*tao-bench-server*.log' -type f | sort > "$METRICS_LIST" || true
 
 echo "[INFO] Latest matching metric files:"
 tail -n 20 "$METRICS_LIST" 2>/dev/null || true
+if [ ! -s "$METRICS_LIST" ]; then
+  echo "[WARN] No tao-bench server metric files found with expected benchmark_metrics_* pattern."
+fi
 
 echo "[INFO] Done. Results in $RESULTS_DIR/"
 ls -la "$RESULTS_DIR/" || true
