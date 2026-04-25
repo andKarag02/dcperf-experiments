@@ -11,6 +11,7 @@ WARMUP_TIME="${WARMUP_TIME:-300}"
 TEST_TIME="${TEST_TIME:-300}"
 PORT_START="${PORT_START:-11211}"
 OPEN_FILES_LIMIT="${OPEN_FILES_LIMIT:-65536}"
+DISABLE_TLS="${DISABLE_TLS:-1}"
 
 cd "$DCPERF_DIR"
 
@@ -42,6 +43,7 @@ METRICS_LIST="$RESULTS_DIR/server_metrics_files_${TIMESTAMP}.txt"
   echo "[INFO] WARMUP_TIME=$WARMUP_TIME"
   echo "[INFO] TEST_TIME=$TEST_TIME"
   echo "[INFO] PORT_START=$PORT_START"
+  echo "[INFO] DISABLE_TLS=$DISABLE_TLS"
   echo "[INFO] OPEN_FILES_LIMIT=$(ulimit -n)"
   echo
   echo "[INFO] Host info"
@@ -63,7 +65,7 @@ METRICS_LIST="$RESULTS_DIR/server_metrics_files_${TIMESTAMP}.txt"
 } | tee "$INFO_FILE"
 
 ./benchpress_cli.py run tao_bench_autoscale \
-  -i "{\"interface_name\":\"${INTERFACE_NAME}\",\"server_hostname\":\"${SERVER_HOSTNAME}\",\"num_clients\":${NUM_CLIENTS},\"memsize\":${MEMSIZE_GB},\"warmup_time\":${WARMUP_TIME},\"test_time\":${TEST_TIME},\"port_number_start\":${PORT_START},\"disable_tls\":1}" \
+  -i "{\"interface_name\":\"${INTERFACE_NAME}\",\"server_hostname\":\"${SERVER_HOSTNAME}\",\"num_clients\":${NUM_CLIENTS},\"memsize\":${MEMSIZE_GB},\"warmup_time\":${WARMUP_TIME},\"test_time\":${TEST_TIME},\"port_number_start\":${PORT_START},\"disable_tls\":${DISABLE_TLS}}" \
   2>&1 | tee "$CONSOLE_LOG"
 
 echo "[INFO] Collecting benchmark metric files..."
