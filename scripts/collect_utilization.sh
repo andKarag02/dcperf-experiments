@@ -74,7 +74,7 @@ write_headers() {
   [ -f "$CPU_CSV" ] || echo "timestamp,node_label,cpu_util_percent" > "$CPU_CSV"
   [ -f "$MEM_CSV" ] || echo "timestamp,node_label,mem_util_percent" > "$MEM_CSV"
   [ -f "$NET_CSV" ] || echo "timestamp,node_label,interface,rx_bytes_per_sec,tx_bytes_per_sec" > "$NET_CSV"
-  [ -f "$DISK_CSV" ] || echo "timestamp,node_label,device,read_kb_per_sec,write_kb_per_sec" > "$DISK_CSV"
+  [ -f "$DISK_CSV" ] || echo "timestamp,node_label,root_device,read_kb_per_sec,write_kb_per_sec" > "$DISK_CSV"
 }
 
 write_headers
@@ -124,8 +124,8 @@ while true; do
   prev_tx="$curr_tx"
 
   read -r curr_read_sectors curr_write_sectors <<<"$(get_disk_sectors || echo '0 0')"
-  read_kbps="$(awk -v c="$curr_read_sectors" -v p="$prev_read_sectors" 'BEGIN {d=c-p; if (d<0) d=0; printf "%.2f", (d*512)/1024}')"
-  write_kbps="$(awk -v c="$curr_write_sectors" -v p="$prev_write_sectors" 'BEGIN {d=c-p; if (d<0) d=0; printf "%.2f", (d*512)/1024}')"
+  read_kbps="$(awk -v c="$curr_read_sectors" -v p="$prev_read_sectors" -v i="$INTERVAL_SECONDS" 'BEGIN {d=c-p; if (d<0) d=0; if (i<=0) i=1; printf "%.2f", ((d*512)/1024)/i}')"
+  write_kbps="$(awk -v c="$curr_write_sectors" -v p="$prev_write_sectors" -v i="$INTERVAL_SECONDS" 'BEGIN {d=c-p; if (d<0) d=0; if (i<=0) i=1; printf "%.2f", ((d*512)/1024)/i}')"
   echo "${ts},${NODE_LABEL},${ROOT_DEV_NAME},${read_kbps},${write_kbps}" >> "$DISK_CSV"
   prev_read_sectors="$curr_read_sectors"
   prev_write_sectors="$curr_write_sectors"
