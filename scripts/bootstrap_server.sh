@@ -86,7 +86,7 @@ echo "[INFO] TaoBench autoscale installed successfully"
 echo "[INFO] Creating tao_server.sh"
 TAO_SERVER_SOURCE="${SCRIPT_DIR}/tao_server.sh"
 if [ ! -f "${TAO_SERVER_SOURCE}" ]; then
-  echo "[INFO] tao_server.sh not found locally — downloading from GitHub"
+  echo "[INFO] tao_server.sh not found locally -- downloading from GitHub"
   curl -fsSL "${REPO_RAW}/tao_server.sh" -o /tmp/tao_server.sh
   TAO_SERVER_SOURCE="/tmp/tao_server.sh"
 fi

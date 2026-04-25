@@ -82,7 +82,7 @@ echo "[INFO] tao_bench_custom installed successfully"
 echo "[INFO] Creating tao_client.sh"
 TAO_CLIENT_SOURCE="${SCRIPT_DIR}/tao_client.sh"
 if [ ! -f "${TAO_CLIENT_SOURCE}" ]; then
-  echo "[INFO] tao_client.sh not found locally — downloading from GitHub"
+  echo "[INFO] tao_client.sh not found locally -- downloading from GitHub"
   curl -fsSL "${REPO_RAW}/tao_client.sh" -o /tmp/tao_client.sh
   TAO_CLIENT_SOURCE="/tmp/tao_client.sh"
 fi
