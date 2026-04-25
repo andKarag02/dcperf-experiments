@@ -82,7 +82,7 @@ write_headers
 read -r prev_cpu_total prev_cpu_idle <<<"$(get_cpu_totals)"
 prev_rx="$(get_rx_bytes)"
 prev_tx="$(get_tx_bytes)"
-read -r prev_read_sectors prev_write_sectors <<<"$(get_disk_sectors || echo '0 0')"
+read -r prev_read_sectors prev_write_sectors <<<"$(get_disk_sectors)"
 
 cleanup() {
   echo "[INFO] collect_utilization.sh stopped"
@@ -123,7 +123,7 @@ while true; do
   prev_rx="$curr_rx"
   prev_tx="$curr_tx"
 
-  read -r curr_read_sectors curr_write_sectors <<<"$(get_disk_sectors || echo '0 0')"
+  read -r curr_read_sectors curr_write_sectors <<<"$(get_disk_sectors)"
   read_kbps="$(awk -v c="$curr_read_sectors" -v p="$prev_read_sectors" -v i="$INTERVAL_SECONDS" 'BEGIN {d=c-p; if (d<0) d=0; if (i<=0) i=1; printf "%.2f", ((d*512)/1024)/i}')"
   write_kbps="$(awk -v c="$curr_write_sectors" -v p="$prev_write_sectors" -v i="$INTERVAL_SECONDS" 'BEGIN {d=c-p; if (d<0) d=0; if (i<=0) i=1; printf "%.2f", ((d*512)/1024)/i}')"
   echo "${ts},${NODE_LABEL},${ROOT_DEV_NAME},${read_kbps},${write_kbps}" >> "$DISK_CSV"
